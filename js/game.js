@@ -18,6 +18,7 @@ let shapePosition = { x: Math.floor(cols / 2) - 1, y: 0 }; // Początkowa pozycj
 function startGame() {
     console.log('Gra rozpoczęta');
     renderNextShape(); // Pokaż początkowy podgląd
+    document.getElementById('bestScore').classList.remove("bestScorePause");
     handleInput();
     startGameLoop();
 }
@@ -160,7 +161,7 @@ function checkGameOver(board) {
 function endGame() {
     gameOver = true;
     togglePause();
-    document.querySelector("#pause div").textContent = "Koniec";
+    document.querySelector("#pause div").textContent = "You Lose";
     clearInterval(intervalId); // Zatrzymaj pętlę gry
 }
 
@@ -170,10 +171,15 @@ function togglePause() {
         document.querySelector("#pause").style.backgroundColor = "#222";
         clearInterval(intervalId);
         document.getElementById('pause').style.display = "flex";
+        document.getElementById('bestScore').classList.add("bestScorePause");
+        document.getElementById('score').classList.add("scorePause");
+
     } else {
         document.querySelector("#pause").style.backgroundColor = "transparent";
         startGameLoop();
         document.getElementById('pause').style.display = "none";
+        document.getElementById('bestScore').classList.remove("bestScorePause");
+        document.getElementById('score').classList.remove("scorePause");
     }
 }
 

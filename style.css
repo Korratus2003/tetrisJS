@@ -1,3 +1,9 @@
+*{
+  font-family: "VT323", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
 body {
   font-family: Arial, sans-serif;
   text-align: center;
@@ -9,6 +15,10 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+}
+h1{
+  font-size: 2rem;
 }
 
 canvas {
@@ -33,10 +43,38 @@ canvas {
   font-size: 20px;
 }
 
+.bestScorePause {
+  position: absolute;
+  top: 30%;
+  z-index: 10;
+  margin: 0;
+  padding: 0;
+  font-weight: 600;
+  font-size: 50px !important;
+  color: white;
+  width: 100%;
+  text-align: center;
+}
+
+.scorePause {
+  position: absolute;
+  top: 20%;
+  z-index: 10;
+  margin: 0;
+  padding: 0;
+  font-weight: 600;
+  font-size: 50px !important;
+  color: white;
+  width: 100%;
+  text-align: center;
+}
+
+
 #startButton{
   aspect-ratio: 2;
   padding: 2%;
   font-size: xx-large;
+  border-radius: 2rem;
 }
 #nextPieceContainer {
   margin-top: 20px;
@@ -81,4 +119,9 @@ canvas {
   left: 50%;
   transform: translateX(-5rem);
   aspect-ratio: 2;
+  border-radius: 2rem;
+}
+
+button{
+  cursor: pointer;
 }
