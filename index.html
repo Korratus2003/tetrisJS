@@ -10,9 +10,18 @@
     <h1>Tetris</h1>
     <button id="startButton">Start</button>
     <canvas id="gameCanvas" width="300" height="600" ></canvas>
-    <div id="score">Score: 0</div>
+    <div id="scoresContainer">
+        <div id="score">Score: 0</div>
+        <div id="bestScore">Best: 0</div>
+    </div>
 
 
+    <div id="nextPieceContainer">
+        <span>Next Piece</span>
+        <canvas id="nextPieceCanvas" width="120" height="120"></canvas>
+      </div>
+      
+    <div id="pause"><div>PAUZA</div><button id="restart">Restart</button></div>
 
     <script src="js/utils.js"></script>
     <script src="js/shapes.js"></script>

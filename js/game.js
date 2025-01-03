@@ -8,6 +8,8 @@ const board = Array.from({ length: rows }, () => Array.from({ length: cols }, ()
 let score = 0;
 let gameOver = false;
 let speed = 500; // Początkowa prędkość opadania klocków
+let isPaused = false;
+
 
 let currentShape = getRandomShape();
 let currentColor = getRandomColor();
@@ -16,9 +18,12 @@ let intervalId;
 
 function startGame() {
     console.log('Gra rozpoczęta');
+    renderNextShape(); // Pokaż początkowy podgląd
     handleInput();
     startGameLoop();
+
 }
+
 
 function startGameLoop() {
     if (intervalId) {
@@ -34,16 +39,19 @@ function startGameLoop() {
 }
 
 function update() {
-    shapePosition.y += 1; // Klocek spada
+    shapePosition.y += 1;
     if (checkCollision(currentShape, shapePosition, board)) {
         shapePosition.y -= 1; // Cofnij ruch w razie kolizji
         mergeShape(currentShape, shapePosition, board, currentColor);
         if (checkGameOver(board)) {
             endGame();
         } else {
-            currentShape = getRandomShape();
-            currentColor = getRandomColor();
+            currentShape = nextShape; // Ustaw obecny kształt jako wcześniej wylosowany
+            currentColor = nextColor; // Ustaw obecny kolor
+            nextShape = getRandomShape(); // Wylosuj nowy kształt
+            nextColor = getRandomColor(); // Wylosuj nowy kolor
             shapePosition = { x: Math.floor(cols / 2) - 1, y: 0 };
+            renderNextShape(); // Odśwież podgląd
         }
     }
 }
@@ -113,27 +121,41 @@ function mergeShape(shape, position, board, color) {
 }
 
 function removeFullLines() {
-    let linesRemoved = 0;
-
-    for (let row = rows - 1; row >= 0; row--) {
+    let linesToRemove = [];
+    for (let row = 0; row < rows; row++) {
         if (board[row].every(cell => cell.value !== 0)) {
-            board.splice(row, 1); // Usuń pełną linię
-            board.unshift(Array.from({ length: cols }, () => ({ value: 0, color: '#111' }))); // Dodaj nową pustą linię na górze
-            linesRemoved += 1;
-            row++; // Sprawdź ponownie tę samą linię (która jest teraz inną linią)
+            linesToRemove.push(row);
         }
     }
 
-    return linesRemoved;
-}
+    if (linesToRemove.length > 0) {
+        linesToRemove.forEach(row => {
+            board[row].forEach(cell => (cell.color = 'white')); // Migotanie
+        });
 
-function updateScore(linesRemoved) {
-    score += linesRemoved * 100; // Dodaj 100 punktów za każdą usuniętą linię
-    document.getElementById('score').innerText = `Score: ${score}`;
-    if (score % 800 === 0) {
-        updateSpeed();
+        setTimeout(() => {
+            linesToRemove.forEach(row => {
+                board.splice(row, 1);
+                board.unshift(Array.from({ length: cols }, () => ({ value: 0, color: '#111' })));
+            });
+            updateScore(linesToRemove.length);
+            render();
+        }, 200); // Opóźnienie przed usunięciem linii
     }
 }
+
+
+function updateScore(linesRemoved) {
+    score += linesRemoved * 100;
+    document.getElementById('score').innerText = `Score: ${score}`;
+
+    const bestScore = localStorage.getItem('bestScore') || 0;
+    if (score > bestScore) {
+        localStorage.setItem('bestScore', score);
+        document.getElementById('bestScore').innerText = `Best: ${score}`;
+    }
+}
+
 
 function updateSpeed() {
     speed = Math.max(100, speed - 50); // Zwiększ prędkość, minimalna wartość to 100 ms
@@ -147,9 +169,45 @@ function checkGameOver(board) {
 
 function endGame() {
     gameOver = true;
-    alert('Game Over!');
+    togglePause();
+    document.querySelector("#pause").style.backgroundColor = "#222";
+    document.querySelector("#pause div").textContent = "Koniec";
     clearInterval(intervalId); // Zatrzymaj pętlę gry
 }
+
+function togglePause() {
+    isPaused = !isPaused;
+    if (isPaused) {
+        clearInterval(intervalId);
+        document.getElementById('pause').style.display = "flex";
+    } else {
+        startGameLoop();
+        document.getElementById('pause').style.display = "none";
+    }
+}
+
+function renderNextShape() {
+    const nextCanvas = document.getElementById('nextPieceCanvas');
+    const nextCtx = nextCanvas.getContext('2d');
+    nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height); // Wyczyszczenie kanwy
+
+    const cellSize = 30; // Rozmiar pojedynczego bloku
+    const offsetX = (nextCanvas.width - nextShape[0].length * cellSize) / 2;
+    const offsetY = (nextCanvas.height - nextShape.length * cellSize) / 2;
+
+    nextShape.forEach((row, y) => {
+        row.forEach((value, x) => {
+            if (value) {
+                nextCtx.fillStyle = nextColor;
+                nextCtx.fillRect(offsetX + x * cellSize, offsetY + y * cellSize, cellSize, cellSize);
+                nextCtx.strokeStyle = '#222';
+                nextCtx.strokeRect(offsetX + x * cellSize, offsetY + y * cellSize, cellSize, cellSize);
+            }
+        });
+    });
+}
+
+
 
 window.startGame = startGame;
 window.rotateShape = rotateShape; // Upewnij się, że rotateShape jest dostępna globalnie

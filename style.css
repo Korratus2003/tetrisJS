@@ -17,9 +17,19 @@ canvas {
   display: none;
 }
 
+#scoresContainer{
+  display: flex;
+  justify-content: center;
+}
+
+
 #score {
   display: none;
-  margin-top: 10px;
+  padding: 10px;
+  font-size: 20px;
+}
+#bestScore{
+  padding: 10px;
   font-size: 20px;
 }
 
@@ -27,4 +37,48 @@ canvas {
   aspect-ratio: 2;
   padding: 2%;
   font-size: xx-large;
+}
+#nextPieceContainer {
+  margin-top: 20px;
+  padding: 10px;
+  border: 2px solid #fff;
+  background-color: #111;
+  border-radius: 8px;
+  display: none;
+  text-align: center;
+}
+
+#nextPieceContainer canvas {
+  display: block;
+  margin: auto;
+}
+
+#nextPieceContainer span {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 5px;
+  color: #ddd;
+}
+
+#pause{
+  font-size: 5rem;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+}
+#restart{
+  width: 10rem;
+  font-size: xx-large;
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translateX(-5rem);
+  aspect-ratio: 2;
 }
