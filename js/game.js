@@ -147,6 +147,10 @@ function updateScore(linesRemoved) {
         localStorage.setItem('bestScore', score);
         document.getElementById('bestScore').innerText = `Best: ${score}`;
     }
+
+    //przyspieszanie gry co 300 punktów
+    if(score % 300 == 0)
+        updateSpeed();
 }
 
 function updateSpeed() {
