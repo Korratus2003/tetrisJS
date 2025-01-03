@@ -6,23 +6,29 @@ const cols = 10;
 const board = Array.from({ length: rows }, () => Array(cols).fill(0));
 let score = 0;
 let gameOver = false;
+let speed = 500; // Początkowa prędkość opadania klocków
 
 let currentShape = getRandomShape();
 let shapePosition = { x: 3, y: 0 }; // Początkowa pozycja
+let intervalId;
 
 function startGame() {
     console.log('Gra rozpoczęta');
     handleInput();
-    gameLoop();
+    startGameLoop();
 }
 
-function gameLoop() {
-    setInterval(() => {
+function startGameLoop() {
+    if (intervalId) {
+        clearInterval(intervalId);
+    }
+    console.log(speed);
+    intervalId = setInterval(() => {
         if (!gameOver) {
             update();
             render();
         }
-    }, 500); // Klocek opada co 500 ms
+    }, speed);
 }
 
 function update() {
@@ -93,6 +99,14 @@ function removeFullLines() {
 function updateScore(linesRemoved) {
     score += linesRemoved * 100; // Dodaj 100 punktów za każdą usuniętą linię
     document.getElementById('score').innerText = `Score: ${score}`;
+    if (score % 800 === 0) {
+        updateSpeed();
+    }
+}
+
+function updateSpeed() {
+    speed = Math.max(100, speed - 50); // Zwiększ prędkość, minimalna wartość to 100 ms
+    startGameLoop(); // Zaktualizuj interwał
 }
 
 function checkGameOver(board) {
@@ -103,6 +117,7 @@ function checkGameOver(board) {
 function endGame() {
     gameOver = true;
     alert('Game Over!');
+    clearInterval(intervalId); // Zatrzymaj pętlę gry
 }
 
 window.startGame = startGame;
