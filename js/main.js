@@ -3,13 +3,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const bestScore = localStorage.getItem('bestScore') || 0;
     document.getElementById('bestScore').innerText = `Best: ${bestScore}`;
 
-
     const startButton = document.getElementById('startButton');
     const resetButton = document.getElementById("restart");
 
-    resetButton.addEventListener("click", ()=>{
+    resetButton.addEventListener("click", () => {
         location.reload();
-    })
+    });
 
     startButton.addEventListener('click', () => {
         document.getElementById('gameCanvas').style.display = 'block';

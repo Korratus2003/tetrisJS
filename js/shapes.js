@@ -31,4 +31,3 @@ function checkCollision(shape, position, board) {
     }
     return false;
 }
-

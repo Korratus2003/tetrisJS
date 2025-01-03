@@ -1,5 +1,4 @@
 function handleInput() {
-
     document.addEventListener('keydown', (event) => {
         if (gameOver) return;
         if (event.key === 'p' || event.key === 'P') {
@@ -27,10 +26,9 @@ function handleInput() {
                 render(); // Renderuj po obrocie
                 break;
             case ' ':
-                hardDrop(); //twardy spadek
-                render();    
+                hardDrop(); // Twardy spadek
+                render();
                 break;
-                        
         }
     });
 }
@@ -67,14 +65,12 @@ function moveDown() {
     }
 }
 
-
 function rotateCurrentShape() {
     const rotatedShape = rotateShape(currentShape);
     if (!checkCollision(rotatedShape, shapePosition, board)) {
         currentShape = rotatedShape; // Jeśli nie ma kolizji, obróć kształt
     }
 }
-
 
 function hardDrop() {
     while (!checkCollision(currentShape, { x: shapePosition.x, y: shapePosition.y + 1 }, board)) {
@@ -94,5 +90,4 @@ function hardDrop() {
     if (checkGameOver(board)) {
         endGame();
     }
-    
 }

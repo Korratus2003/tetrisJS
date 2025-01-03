@@ -1,7 +1,6 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-
 const rows = 20;
 const cols = 10;
 const board = Array.from({ length: rows }, () => Array.from({ length: cols }, () => ({ value: 0, color: '#111' })));
@@ -9,7 +8,6 @@ let score = 0;
 let gameOver = false;
 let speed = 500; // Początkowa prędkość opadania klocków
 let isPaused = false;
-
 
 let currentShape = getRandomShape();
 let currentColor = getRandomColor();
@@ -21,9 +19,7 @@ function startGame() {
     renderNextShape(); // Pokaż początkowy podgląd
     handleInput();
     startGameLoop();
-
 }
-
 
 function startGameLoop() {
     if (intervalId) {
@@ -144,7 +140,6 @@ function removeFullLines() {
     }
 }
 
-
 function updateScore(linesRemoved) {
     score += linesRemoved * 100;
     document.getElementById('score').innerText = `Score: ${score}`;
@@ -156,21 +151,18 @@ function updateScore(linesRemoved) {
     }
 }
 
-
 function updateSpeed() {
     speed = Math.max(100, speed - 50); // Zwiększ prędkość, minimalna wartość to 100 ms
     startGameLoop(); // Zaktualizuj interwał
 }
 
 function checkGameOver(board) {
-    // Jeśli jakakolwiek komórka w górnym rzędzie jest zapełniona, gra się kończy
     return board[0].some(cell => cell.value !== 0);
 }
 
 function endGame() {
     gameOver = true;
     togglePause();
-    document.querySelector("#pause").style.backgroundColor = "#222";
     document.querySelector("#pause div").textContent = "Koniec";
     clearInterval(intervalId); // Zatrzymaj pętlę gry
 }
@@ -178,9 +170,11 @@ function endGame() {
 function togglePause() {
     isPaused = !isPaused;
     if (isPaused) {
+        document.querySelector("#pause").style.backgroundColor = "#222";
         clearInterval(intervalId);
         document.getElementById('pause').style.display = "flex";
     } else {
+        document.querySelector("#pause").style.backgroundColor = "transparent";
         startGameLoop();
         document.getElementById('pause').style.display = "none";
     }
@@ -189,9 +183,9 @@ function togglePause() {
 function renderNextShape() {
     const nextCanvas = document.getElementById('nextPieceCanvas');
     const nextCtx = nextCanvas.getContext('2d');
-    nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height); // Wyczyszczenie kanwy
+    nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
 
-    const cellSize = 30; // Rozmiar pojedynczego bloku
+    const cellSize = 30;
     const offsetX = (nextCanvas.width - nextShape[0].length * cellSize) / 2;
     const offsetY = (nextCanvas.height - nextShape.length * cellSize) / 2;
 
@@ -206,8 +200,6 @@ function renderNextShape() {
         });
     });
 }
-
-
 
 window.startGame = startGame;
 window.rotateShape = rotateShape; // Upewnij się, że rotateShape jest dostępna globalnie
