@@ -39,9 +39,10 @@ function moveDown() {
     shapePosition.y += 1;
     if (checkCollision(currentShape, shapePosition, board)) {
         shapePosition.y -= 1; // Cofnij ruch w razie kolizji
-        mergeShape(currentShape, shapePosition, board);
+        mergeShape(currentShape, shapePosition, board, currentColor); // Upewnij się, że przekazujesz currentColor
         currentShape = getRandomShape();
-        shapePosition = { x: 3, y: 0 };
+        currentColor = getRandomColor(); // Zaktualizuj currentColor
+        shapePosition = { x: Math.floor(cols / 2) - 1, y: 0 };
     }
 }
 

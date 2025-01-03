@@ -1,4 +1,6 @@
 const colors = ['#FF5733', '#33FF57', '#3357FF', '#FFFF33', '#FF33FF', '#33FFFF', '#FF9933'];
+
+
 function getRandomShape() {
     const shapes = [
         [[1, 1, 1, 1]], // I
@@ -10,9 +12,11 @@ function getRandomShape() {
         [[0, 0, 1], [1, 1, 1]], // J
     ];
     const randomIndex = Math.floor(Math.random() * shapes.length);
-    fillColor = colors[Math.floor(Math.random() * colors.length)];
     return shapes[randomIndex];
 
 }
 
-let fillColor = "#f00";
+function getRandomColor() {
+    return colors[Math.floor(Math.random() * colors.length)];
+}
+

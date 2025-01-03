@@ -1,15 +1,17 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
+
 const rows = 20;
 const cols = 10;
-const board = Array.from({ length: rows }, () => Array(cols).fill(0));
+const board = Array.from({ length: rows }, () => Array.from({ length: cols }, () => ({ value: 0, color: '#111' })));
 let score = 0;
 let gameOver = false;
 let speed = 500; // Początkowa prędkość opadania klocków
 
 let currentShape = getRandomShape();
-let shapePosition = { x: 3, y: 0 }; // Początkowa pozycja
+let currentColor = getRandomColor();
+let shapePosition = { x: Math.floor(cols / 2) - 1, y: 0 }; // Początkowa pozycja
 let intervalId;
 
 function startGame() {
@@ -22,7 +24,7 @@ function startGameLoop() {
     if (intervalId) {
         clearInterval(intervalId);
     }
-    console.log(speed);
+    console.log(`Aktualna prędkość: ${speed} ms`);
     intervalId = setInterval(() => {
         if (!gameOver) {
             update();
@@ -35,12 +37,13 @@ function update() {
     shapePosition.y += 1; // Klocek spada
     if (checkCollision(currentShape, shapePosition, board)) {
         shapePosition.y -= 1; // Cofnij ruch w razie kolizji
-        mergeShape(currentShape, shapePosition, board);
+        mergeShape(currentShape, shapePosition, board, currentColor);
         if (checkGameOver(board)) {
             endGame();
         } else {
             currentShape = getRandomShape();
-            shapePosition = { x: 3, y: 0 };
+            currentColor = getRandomColor();
+            shapePosition = { x: Math.floor(cols / 2) - 1, y: 0 };
         }
     }
 }
@@ -48,17 +51,13 @@ function update() {
 function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBoard();
-    drawShape(ctx, currentShape, shapePosition);
+    drawShape(ctx, currentShape, shapePosition, currentColor);
 }
 
 function drawBoard() {
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
-            if (board[row][col] === 0) {
-                ctx.fillStyle = '#111';
-            } else {
-                ctx.fillStyle = fillColor;
-            }
+            ctx.fillStyle = board[row][col].color;
             ctx.fillRect(col * 30, row * 30, 30, 30);
             ctx.strokeStyle = '#222';
             ctx.strokeRect(col * 30, row * 30, 30, 30);
@@ -66,11 +65,43 @@ function drawBoard() {
     }
 }
 
-function mergeShape(shape, position, board) {
+function drawShape(ctx, shape, position, color) {
     shape.forEach((row, y) => {
         row.forEach((value, x) => {
             if (value) {
-                board[position.y + y][position.x + x] = value;
+                ctx.fillStyle = color;
+                ctx.fillRect((position.x + x) * 30, (position.y + y) * 30, 30, 30);
+                ctx.strokeStyle = '#222';
+                ctx.strokeRect((position.x + x) * 30, (position.y + y) * 30, 30, 30);
+            }
+        });
+    });
+}
+
+function checkCollision(shape, position, board) {
+    for (let y = 0; y < shape.length; y++) {
+        for (let x = 0; x < shape[y].length; x++) {
+            if (shape[y][x] !== 0) {
+                const boardY = position.y + y;
+                const boardX = position.x + x;
+                if (boardX < 0 || boardX >= board[0].length || boardY >= board.length || boardY < 0 || board[boardY][boardX].value !== 0) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+function mergeShape(shape, position, board, color) {
+    shape.forEach((row, y) => {
+        row.forEach((value, x) => {
+            if (value) {
+                const boardY = position.y + y;
+                const boardX = position.x + x;
+                if (boardY >= 0 && boardY < board.length && boardX >= 0 && boardX < board[0].length) {
+                    board[boardY][boardX] = { value, color }; // Przypisz wartość i kolor
+                }
             }
         });
     });
@@ -85,9 +116,9 @@ function removeFullLines() {
     let linesRemoved = 0;
 
     for (let row = rows - 1; row >= 0; row--) {
-        if (board[row].every(cell => cell !== 0)) {
+        if (board[row].every(cell => cell.value !== 0)) {
             board.splice(row, 1); // Usuń pełną linię
-            board.unshift(Array(cols).fill(0)); // Dodaj nową pustą linię na górze
+            board.unshift(Array.from({ length: cols }, () => ({ value: 0, color: '#111' }))); // Dodaj nową pustą linię na górze
             linesRemoved += 1;
             row++; // Sprawdź ponownie tę samą linię (która jest teraz inną linią)
         }
@@ -111,7 +142,7 @@ function updateSpeed() {
 
 function checkGameOver(board) {
     // Jeśli jakakolwiek komórka w górnym rzędzie jest zapełniona, gra się kończy
-    return board[0].some(cell => cell !== 0);
+    return board[0].some(cell => cell.value !== 0);
 }
 
 function endGame() {
