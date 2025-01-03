@@ -39,9 +39,3 @@ function drawNextPiece() {
     });
 }
 
-// Przy generowaniu nowego klocka:
-currentShape = nextShape;
-currentColor = nextColor;
-nextShape = getRandomShape();
-nextColor = getRandomColor();
-drawNextPiece();

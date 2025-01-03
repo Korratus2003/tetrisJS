@@ -8,12 +8,13 @@ let score = 0;
 let gameOver = false;
 let speed = 500; // Początkowa prędkość opadania klocków
 let isPaused = false;
+let intervalId;
 
 let currentShape = getRandomShape();
 let currentColor = getRandomColor();
 let shapePosition = { x: Math.floor(cols / 2) - 1, y: 0 }; // Początkowa pozycja
-let intervalId;
 
+// Sekcja: Inicjalizacja gry
 function startGame() {
     console.log('Gra rozpoczęta');
     renderNextShape(); // Pokaż początkowy podgląd
@@ -34,6 +35,7 @@ function startGameLoop() {
     }, speed);
 }
 
+// Sekcja: Aktualizacja stanu gry
 function update() {
     shapePosition.y += 1;
     if (checkCollision(currentShape, shapePosition, board)) {
@@ -52,6 +54,7 @@ function update() {
     }
 }
 
+// Sekcja: Renderowanie i odświeżanie
 function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBoard();
@@ -69,34 +72,28 @@ function drawBoard() {
     }
 }
 
-function drawShape(ctx, shape, position, color) {
-    shape.forEach((row, y) => {
+function renderNextShape() {
+    const nextCanvas = document.getElementById('nextPieceCanvas');
+    const nextCtx = nextCanvas.getContext('2d');
+    nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+
+    const cellSize = 30;
+    const offsetX = (nextCanvas.width - nextShape[0].length * cellSize) / 2;
+    const offsetY = (nextCanvas.height - nextShape.length * cellSize) / 2;
+
+    nextShape.forEach((row, y) => {
         row.forEach((value, x) => {
             if (value) {
-                ctx.fillStyle = color;
-                ctx.fillRect((position.x + x) * 30, (position.y + y) * 30, 30, 30);
-                ctx.strokeStyle = '#222';
-                ctx.strokeRect((position.x + x) * 30, (position.y + y) * 30, 30, 30);
+                nextCtx.fillStyle = nextColor;
+                nextCtx.fillRect(offsetX + x * cellSize, offsetY + y * cellSize, cellSize, cellSize);
+                nextCtx.strokeStyle = '#222';
+                nextCtx.strokeRect(offsetX + x * cellSize, offsetY + y * cellSize, cellSize, cellSize);
             }
         });
     });
 }
 
-function checkCollision(shape, position, board) {
-    for (let y = 0; y < shape.length; y++) {
-        for (let x = 0; x < shape[y].length; x++) {
-            if (shape[y][x] !== 0) {
-                const boardY = position.y + y;
-                const boardX = position.x + x;
-                if (boardX < 0 || boardX >= board[0].length || boardY >= board.length || boardY < 0 || board[boardY][boardX].value !== 0) {
-                    return true;
-                }
-            }
-        }
-    }
-    return false;
-}
-
+// Sekcja: Funkcje pomocnicze
 function mergeShape(shape, position, board, color) {
     shape.forEach((row, y) => {
         row.forEach((value, x) => {
@@ -180,26 +177,5 @@ function togglePause() {
     }
 }
 
-function renderNextShape() {
-    const nextCanvas = document.getElementById('nextPieceCanvas');
-    const nextCtx = nextCanvas.getContext('2d');
-    nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
-
-    const cellSize = 30;
-    const offsetX = (nextCanvas.width - nextShape[0].length * cellSize) / 2;
-    const offsetY = (nextCanvas.height - nextShape.length * cellSize) / 2;
-
-    nextShape.forEach((row, y) => {
-        row.forEach((value, x) => {
-            if (value) {
-                nextCtx.fillStyle = nextColor;
-                nextCtx.fillRect(offsetX + x * cellSize, offsetY + y * cellSize, cellSize, cellSize);
-                nextCtx.strokeStyle = '#222';
-                nextCtx.strokeRect(offsetX + x * cellSize, offsetY + y * cellSize, cellSize, cellSize);
-            }
-        });
-    });
-}
-
 window.startGame = startGame;
-window.rotateShape = rotateShape; // Upewnij się, że rotateShape jest dostępna globalnie
+window.rotateShape = rotateShape;
