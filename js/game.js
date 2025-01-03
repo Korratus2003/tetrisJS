@@ -51,7 +51,7 @@ function drawBoard() {
             if (board[row][col] === 0) {
                 ctx.fillStyle = '#111';
             } else {
-                ctx.fillStyle = '#fff';
+                ctx.fillStyle = fillColor;
             }
             ctx.fillRect(col * 30, row * 30, 30, 30);
             ctx.strokeStyle = '#222';
