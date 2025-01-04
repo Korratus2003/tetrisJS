@@ -155,9 +155,12 @@ function updateScore(linesRemoved) {
     let currentLevel = Math.floor(score / 300);
 
     if (currentLevel > previousLevel) {
-        updateSpeed();
+        for (let i = previousLevel; i < currentLevel; i++) {
+            updateSpeed();
+        }
     }
 }
+
 
 
 function updateSpeed() {
