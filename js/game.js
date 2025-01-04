@@ -140,6 +140,7 @@ function removeFullLines() {
 }
 
 function updateScore(linesRemoved) {
+    let previousScore = score;
     score += linesRemoved * 100;
     document.getElementById('score').innerText = `Score: ${score}`;
 
@@ -149,10 +150,15 @@ function updateScore(linesRemoved) {
         document.getElementById('bestScore').innerText = `Best: ${score}`;
     }
 
-    //przyspieszanie gry co 300 punktów
-    if(score % 300 == 0)
+    // Przyspieszanie gry co 300 punktów
+    let previousLevel = Math.floor(previousScore / 300);
+    let currentLevel = Math.floor(score / 300);
+
+    if (currentLevel > previousLevel) {
         updateSpeed();
+    }
 }
+
 
 function updateSpeed() {
     speed = Math.max(100, speed - 50); // Zwiększ prędkość, minimalna wartość to 100 ms
